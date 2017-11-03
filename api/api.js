@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const logger = require("morgan");
 const multer = require("multer");
+const imagesRouter = require("./controller/images");
 const apiConfig = require("./config");
 
 const app = express();
@@ -27,7 +28,6 @@ mongoose.connect(apiConfig.mongoURI, { useMongoClient: true }, err => {
   }
 });
 
-const imagesRouter = require("./controller/images2");
 app.use("/api", imagesRouter);
 
 app.listen(apiConfig.port, function(error) {

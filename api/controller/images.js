@@ -1,76 +1,50 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
-let Grid = require("gridfs-stream");
-let conn = mongoose.connection;
-Grid.mongo = mongoose.mongo;
-let gfs;
+const path = require("path");
+const fs = require("fs");
+const del = require("del");
+const Image = require("../models/image");
 
-conn.once("open", () => {
-  gfs = Grid(conn.db);
-  router.get("/", (req, res) => {
-    res.send({ "hello": "world" });
-  });
-  router.get("/img/:imgname", (req, res) => {
-    let imgname = req.params.imgname;
-    gfs.files.find({
-      filename: imgname
-    }).toArray((err, files) => {
+router.post("/img", (req, res) => {
+  // check if image file is uploaded
+  if(req.file === undefined || req.file === null) { return res.status(400).send({ error: "Please upload an image file" }) }
+  fs.readFile(req.file.path, (err, data) => {
+    const base64img = new Buffer(data).toString("base64");
+    let newImage = new Image({
+      img: base64img,
+      contentType: req.file.mimetype,
+      size: req.file.size,
+      width: req.body.width,
+      height: req.body.height
+    });
+    // delete all images in the upload directory
+    let folderPath = `${process.cwd()}/uploads`;
+    del.sync([`${folderPath}/**`, `!${folderPath}`]);
 
-      if (files.length === 0) {
-        return res.status(404).send({
-          message: "File not found"
-        });
-      }
-      let data = [];
-      let readstream = gfs.createReadStream({
-        filename: files[0].filename
-      });
-
-      readstream.on("data", (chunk) => {
-        data.push(chunk);
-      });
-
-      readstream.on("end", () => {
-        data = Buffer.concat(data);
-        let img = "data:image/png;base64," + Buffer(data).toString("base64");
-        res.end(img);
-      });
-
-      readstream.on("error", (err) => {
-        // if theres an error, respond with a status of 500
-        // responds should be sent, otherwise the users will be kept waiting
-        // until Connection Time out
-        res.status(500).send(err);
-        console.log("An error occurred!", err);
-      });
+    newImage.save().then(() => {
+      res.send("Thanks for uploading an image");
+    })
+    .catch((error) => {
+      res.status(400).send({ error: error.message });
     });
   });
-  router.post("/img", (req, res) => {
-    let part = req.files.file;
-    let writeStream = gfs.createWriteStream({
-      filename: "img_" + part.name,
-      mode: "w",
-      content_type: part.mimetype
-    });
-    writeStream.on("close", (file) => {
-      // checking for file
-      if(!file) {
-        res.status(400).send("No file received");
-      }
-      return res.status(200).send({
-        message: "Success",
-        file: file
-      });
-    });
-    // using callbacks is important !
-    // writeStream should end the operation once all data is written to the DB
-    writeStream.write(part.data, () => {
-      writeStream.end();
-    });
-  })
+});
+
+router.get("/img", (req, res) => {
+  console.log("WIDTH", req.query.width);
+  console.log("HEIGHT", req.query.height);
+  res.send({"Hello": "There"});
 });
 
 
-
+// router.post("/img", (req, res) => {
+//   console.log("FILE:", req.files.file);
+//   fs.readFile(req.files.file.name, (err, data) => {
+//     console.log(data);
+//     const base64img = new Buffer(data).toString("base64");
+//     console.log(base64img);
+//   })
+//   res.send({ "hello": "world" });
+// })
 
 module.exports = router;
