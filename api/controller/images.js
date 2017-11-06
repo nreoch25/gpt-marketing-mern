@@ -22,7 +22,7 @@ router.post("/img", (req, res) => {
     del.sync([`${folderPath}/**`, `!${folderPath}`]);
 
     newImage.save().then(() => {
-      res.send("Thanks for uploading an image");
+      res.status(200).send("Thanks for uploading an image");
     })
     .catch((error) => {
       res.status(400).send({ error: error.message });
@@ -31,20 +31,21 @@ router.post("/img", (req, res) => {
 });
 
 router.get("/img", (req, res) => {
-  console.log("WIDTH", req.query.width);
-  console.log("HEIGHT", req.query.height);
-  res.send({"Hello": "There"});
+  let imgWidth = parseInt(req.query.width);
+  let imgHeight = parseInt(req.query.height);
+  Image.aggregate([
+    { $match: { width: imgWidth, height: imgHeight } },
+    { $sample: { size: 1 } }
+  ]).then((response) => {
+    console.log(response.length);
+    if(response.length === 1) {
+      return res.status(200).send({ image: response });
+    } else {
+      return res.status(200).send("No marketing image to return that fits your criteria");
+    }
+  }).catch((error) => {
+    res.status(400).send({ error: error.message });
+  });
 });
-
-
-// router.post("/img", (req, res) => {
-//   console.log("FILE:", req.files.file);
-//   fs.readFile(req.files.file.name, (err, data) => {
-//     console.log(data);
-//     const base64img = new Buffer(data).toString("base64");
-//     console.log(base64img);
-//   })
-//   res.send({ "hello": "world" });
-// })
 
 module.exports = router;
