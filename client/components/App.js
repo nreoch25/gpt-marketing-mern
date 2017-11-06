@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { fetchPosts, fetchPhotos } from "../actions/AppActions";
+import Header from "./global/Header";
+import Footer from "./global/Footer";
 
 class App extends Component {
   render() {
     return (
-      <div>
-        <header>Site Header</header>
+      <div className="container">
+        <Header />
         {this.props.children}
-        <footer>Site Footer</footer>
+        <Footer />
       </div>
     );
   }

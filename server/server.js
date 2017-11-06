@@ -56,10 +56,13 @@ const renderFullPage = (html, initialState) => {
     <!DOCTYPE HTML>
     <html>
       <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
         ${process.env.NODE_ENV === "production"
           ? `<link rel="stylesheet" href="${assetsManifest["/app.css"]}" />`
           : ""}
         <link href="https://fonts.googleapis.com/css?family=Lato:400,300,700" rel="stylesheet" type="text/css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
       </head>
       <body>
         <div id="root"><div>${html}</div></div>

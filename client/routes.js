@@ -12,6 +12,7 @@ if (typeof require.ensure !== "function") {
 if (process.env.NODE_ENV !== "production") {
   // Require async routes only in development for react-hot-reloader to work.
   require("./components/Index");
+  require("./components/Upload")
 }
 
 export default (
@@ -20,6 +21,14 @@ export default (
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require("./components/Index").default);
+        });
+      }}
+    />
+    <Route
+      path="upload"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require("./components/Upload").default);
         });
       }}
     />
