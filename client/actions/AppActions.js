@@ -1,35 +1,19 @@
 import callApi from "../utils/apiCaller";
 
 // Export Constants
-export const ADD_POSTS = "ADD_POSTS";
-export const ADD_PHOTOS = "ADD_PHOTOS";
+export const ADD_INVENTORY = "ADD_INVENTORY";
 
-export function addPosts(posts) {
+function addInventory(inventory) {
   return {
-    type: ADD_POSTS,
-    posts
+    type: ADD_INVENTORY,
+    inventory
   };
 }
 
-export function addPhotos(photos) {
-  return {
-    type: ADD_PHOTOS,
-    photos
-  };
-}
-
-export function fetchPosts() {
+export function fetchInventory() {
   return (dispatch) => {
-    return callApi("posts", "get").then(res => {
-      dispatch(addPosts(res));
+    return callApi("images", "get").then(res => {
+      dispatch(addInventory(res.images));
     });
-  };
-}
-
-export function fetchPhotos() {
-  return (dispatch) => {
-    return callApi("photos", "get").then(res => {
-      dispatch(addPhotos(res));
-    });
-  };
+  }
 }

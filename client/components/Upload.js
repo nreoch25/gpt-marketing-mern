@@ -19,7 +19,7 @@ class Upload extends Component {
     formData.append("width", this.fileWidth);
     formData.append("height", this.fileHeight);
     formData.append("image", this.fileUpload);
-    fetch("http://localhost:3000/api/img", {
+    fetch("http://localhost:3000/api/image", {
       method: "post",
       body: formData
     }).then((response) => {

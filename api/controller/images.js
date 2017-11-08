@@ -5,13 +5,13 @@ const fs = require("fs");
 const del = require("del");
 const Image = require("../models/image");
 
-router.post("/img", (req, res) => {
+router.post("/image", (req, res) => {
   // check if image file is uploaded
   if(req.file === undefined || req.file === null) { return res.status(400).send({ error: "Please upload an image file" }) }
   fs.readFile(req.file.path, (err, data) => {
-    const base64img = new Buffer(data).toString("base64");
+    const base64img = data.toString("base64");
     let newImage = new Image({
-      img: base64img,
+      img: Buffer(base64img, "base64"),
       contentType: req.file.mimetype,
       size: req.file.size,
       width: req.body.width,
@@ -30,7 +30,15 @@ router.post("/img", (req, res) => {
   });
 });
 
-router.get("/img", (req, res) => {
+router.get("/images", (req, res) => {
+  Image.find({}).then((response) => {
+    return res.status(200).send({ images: response });
+  }).catch((error) => {
+    res.status(400).send({ error: error.message });
+  });
+});
+
+router.get("/image", (req, res) => {
   let imgWidth = parseInt(req.query.width);
   let imgHeight = parseInt(req.query.height);
   Image.aggregate([

@@ -1,5 +1,5 @@
 import fetch from "isomorphic-fetch";
-const API_URL = "https://jsonplaceholder.typicode.com";
+const API_URL = "http://localhost:3000/api";
 
 export default function callApi(endpoint, method) {
   return fetch(`${API_URL}/${endpoint}`, {

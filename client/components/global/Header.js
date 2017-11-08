@@ -28,6 +28,9 @@ class Header extends Component {
                       <li>
                         <Link to="/upload">Upload</Link>
                       </li>
+                      <li>
+                        <Link to="/inventory">Inventory</Link>
+                      </li>
                     </ul>
                   </div>
                 </div>
